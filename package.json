@@ -1,0 +1,33 @@
+{
+  "name": "RacerJS",
+  "version": "1.0.0",
+  "description": "JS, WebSocket, Node.js",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon --ignore ./src/sessions app.js",
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZholobovSS/RacerJS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZholobovSS/RacerJS/issues"
+  },
+  "homepage": "https://github.com/ZholobovSS/RacerJS#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "hbs": "^4.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.8.1",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "nodemon": "^2.0.4"
+  }
+}
