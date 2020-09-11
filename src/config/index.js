@@ -1,7 +1,7 @@
-const express = require('express')
+const path = require('path')
 
-const router = express.Router()
+const appRootDir = path.dirname(require.main.filename)
 
 module.exports = {
-  router,
+  appRootDir,
 }

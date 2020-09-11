@@ -1,5 +1,5 @@
 const main = (req, res) => {
-  res.send('Hello')
+  res.render('index', { mainpage: true })
 }
 
 module.exports = {
