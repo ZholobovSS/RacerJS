@@ -5,8 +5,12 @@
   </button>
 </div>
 
+
 <ul data-gamesContainer class="list-group py-5 list-group-flush">
-  <li class="list-group-item">Cras justo odio</li>
+  {{#each games}}
+  <li data-gameid="{{@key}}" class="d-flex pointer justify-content-between list-group-item">
+    <span>{{this.name}}</span><span data-playerscount>{{this.players.length}}/{{this.maxPlayers}}</span></li>
+  {{/each}}
   <li class="list-group-item"></li>
 </ul>
 

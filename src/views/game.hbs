@@ -1,1 +1,17 @@
-current game
+<div data-track class="my-5">
+  {{#each players}}
+  <div data-player="{{this.id}}" class="path">
+    <div class="section active">
+      <div data-name="{{this.nick}}" class="car">
+
+        {{this.skin}}
+      </div>
+    </div>
+
+    {{#times ../gameConfig.trackLength}}
+    <div class="section"></div>
+    {{/times}}
+
+  </div>
+  {{/each}}
+</div>

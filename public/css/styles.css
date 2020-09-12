@@ -115,7 +115,6 @@ body {
   transform: translateX(-50%)
 }
 
-
 .regTitle {
   background: whitesmoke;
   padding: 1rem 0;
@@ -125,4 +124,44 @@ body {
 .selectSkin {
   border: 1px solid #ced4da;
     border-radius: .25rem;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.path {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  border-bottom: 2px solid #ccc;
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.section.active {
+  border-bottom-color: black;
+}
+
+.car {
+  transform: scaleX(-1);
+  position: relative;
+}
+
+.car:before {
+  position: absolute;
+  content: attr(data-name);
+  display: block;
+  top: 50%;
+  transform: scaleX(-1) translateY(-50%);
+  left: calc(100% + 10px);
 }

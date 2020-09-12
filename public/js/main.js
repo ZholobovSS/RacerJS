@@ -1,19 +1,13 @@
 import { gamesScript } from './gamesScript.js'
 import { registration } from './registration.js'
+import { gameScript } from './gameScript.js'
 
 const userLocation = window.location.pathname
 
-switch (userLocation) {
-  case '/':
-    registration()
-    break
-  case '/games':
-    console.log('games')
-    gamesScript()
-    break
-  case /games\/\d+/.test(userLocation):
-    console.log('current game')
-    break
-  default:
-    break
+if (userLocation === '/') {
+  registration()
+} else if (/games\/?$/.test(userLocation)) {
+  gamesScript()
+} else if (/games\/\w+/.test(userLocation)) {
+  gameScript()
 }
