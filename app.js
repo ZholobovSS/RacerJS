@@ -42,6 +42,37 @@ wss.on('connection', (ws) => {
     const parseData = JSON.parse(message)
 
     switch (parseData.type) {
+      case 'authorization':
+        if (app.locals.users[parseData.payload.id]) {
+          ws.send(JSON.stringify({
+            type: 'authorization',
+            payload: {
+              status: 'OK',
+
+            },
+          }))
+        } else if (!app.locals.users[parseData.payload.id]
+          && !Object.values(app.locals.users).find((user) => user.nick === parseData.payload.nick)) {
+          app.locals.users[parseData.payload.id] = {
+            nick: parseData.payload.nick,
+            skin: parseData.payload.skin,
+          }
+          ws.send(JSON.stringify({
+            type: 'authorization',
+            payload: {
+              status: 'OK',
+
+            },
+          }))
+        } else {
+          ws.send(JSON.stringify({
+            type: 'authorization',
+            payload: {
+              status: 'BAD',
+            },
+          }))
+        }
+        break
       case 'newUser':
         if (!Object.values(app.locals.users).find((user) => user.nick === parseData.payload.nick)) {
           const userID = uuidv4()
@@ -147,10 +178,33 @@ wss.on('connection', (ws) => {
         }
       }
         break
+      case 'leaveGame':
+        console.log(parseData)
+        app.locals.games[parseData.payload.gameID].players = app.locals.games[parseData.payload.gameID].players.filter((player) => player.id !== parseData.payload.userID)
+        wss.clients.forEach((client) => {
+          console.log('=============================')
+          if (client !== ws && client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+              type: 'updateGameList',
+              payload: {
+                gameID: parseData.payload.gameID,
+                players: app.locals.games[parseData.payload.gameID].players.length,
+              },
+            }))
+            client.send(JSON.stringify({
+              type: 'leaveGame',
+              payload: {
+                id: parseData.payload.userID,
+              },
+            }))
+          }
+        })
+
+        break
       default:
         break
     }
-
+    console.log(app.locals.users, app.locals.games)
     console.log('received: ', parseData)
   })
 

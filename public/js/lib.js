@@ -53,10 +53,36 @@ function udateGame(game) {
   }
 }
 
+function removeFromRace(id) {
+  return document.querySelector(`[data-player="${id}"]`).remove()
+}
+
 function isLogin() {
   const user = getUserFromLocalStorage()
   if (!user && window.location.pathname !== '/') window.location.href = '/'
-  else if (user && window.location.pathname === '/') window.location.href = '/games'
+  if (user) {
+    ws.addEventListener('open', () => {
+      ws.send(JSON.stringify({
+        type: 'authorization', payload: user,
+      }))
+    })
+
+    ws.addEventListener('message', (message) => {
+      const parseData = JSON.parse(message.data)
+
+      switch (parseData.payload.status) {
+        case 'OK':
+          if (window.location.pathname === '/') window.location.href = '/games'
+          break
+        case 'BAD':
+          localStorage.removeItem('user')
+          if (window.location.pathname !== '/') window.location.href = '/'
+          break
+        default:
+          break
+      }
+    })
+  }
 }
 
 export {
@@ -67,4 +93,6 @@ export {
   udateGame,
   isLogin,
   renderNewRacer,
+  getUserFromLocalStorage,
+  removeFromRace,
 }

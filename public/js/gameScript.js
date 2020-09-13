@@ -1,5 +1,5 @@
 import {
-  ws, isLogin, renderNewRacer,
+  ws, isLogin, renderNewRacer, getUserFromLocalStorage, removeFromRace,
 } from './lib.js'
 
 function gameScript() {
@@ -14,9 +14,23 @@ function gameScript() {
       case 'newRacer':
         renderNewRacer(parseData.payload)
         break
+      case 'leaveGame':
+        removeFromRace(parseData.payload.id)
+        break
       default:
         break
     }
+  })
+
+  window.addEventListener('beforeunload', (event) => {
+    const track = document.querySelector('[data-track]')
+    ws.send(JSON.stringify({
+      type: 'leaveGame',
+      payload: {
+        userID: getUserFromLocalStorage().id,
+        gameID: track.dataset.track,
+      },
+    }))
   })
 }
 

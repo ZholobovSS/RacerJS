@@ -16,6 +16,7 @@ const current = (req, res) => {
       ...gameConfig,
       trackLength: gameConfig.trackLength - 1,
     },
+    gameID: id,
     players: req.app.locals.games[id].players.map((player) => ({ ...req.app.locals.users[player.id], id: player.id })),
   })
 }
