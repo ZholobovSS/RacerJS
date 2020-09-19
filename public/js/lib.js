@@ -57,6 +57,10 @@ function removeFromRace(id) {
   return document.querySelector(`[data-player="${id}"]`).remove()
 }
 
+function removeGame(gameID) {
+  document.querySelector(`[data-gameid="${gameID}"]`).remove()
+}
+
 function isLogin() {
   const user = getUserFromLocalStorage()
   if (!user && window.location.pathname !== '/') window.location.href = '/'
@@ -95,4 +99,5 @@ export {
   renderNewRacer,
   getUserFromLocalStorage,
   removeFromRace,
+  removeGame,
 }

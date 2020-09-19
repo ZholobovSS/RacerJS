@@ -1,5 +1,5 @@
 import {
-  ws, addExtraTextForInput, renderNewGame, gamesHandler, udateGame, isLogin,
+  ws, addExtraTextForInput, renderNewGame, gamesHandler, udateGame, isLogin, removeGame,
 } from './lib.js'
 
 function gamesScript() {
@@ -41,6 +41,9 @@ function gamesScript() {
         break
       case 'updateGameList':
         udateGame(parseData.payload)
+        break
+      case 'removeGameFromList':
+        removeGame(parseData.payload.gameID)
         break
       case 'connect':
         if (parseData.payload.status === 'OK') {

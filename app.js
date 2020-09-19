@@ -181,9 +181,21 @@ wss.on('connection', (ws) => {
       case 'leaveGame':
         console.log(parseData)
         app.locals.games[parseData.payload.gameID].players = app.locals.games[parseData.payload.gameID].players.filter((player) => player.id !== parseData.payload.userID)
+        if (!app.locals.games[parseData.payload.gameID].players.length) {
+          delete app.locals.games[parseData.payload.gameID]
+        }
         wss.clients.forEach((client) => {
           console.log('=============================')
-          if (client !== ws && client.readyState === WebSocket.OPEN) {
+          if (!app.locals.games[parseData.payload.gameID]) {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify({
+                type: 'removeGameFromList',
+                payload: {
+                  gameID: parseData.payload.gameID,
+                },
+              }))
+            }
+          } else if (client !== ws && client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({
               type: 'updateGameList',
               payload: {
