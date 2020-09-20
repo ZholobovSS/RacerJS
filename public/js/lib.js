@@ -61,6 +61,45 @@ function removeGame(gameID) {
   document.querySelector(`[data-gameid="${gameID}"]`).remove()
 }
 
+function setIdReadyButton() {
+  const user = getUserFromLocalStorage()
+  const readyButton = document.querySelector('[data-ready]')
+  readyButton.dataset.ready = user.id
+}
+
+function readyForGame(e) {
+  ws.send(JSON.stringify({
+    type: 'playerReady',
+    payload: {
+      userID: e.target.dataset.ready,
+      gameID: e.target.closest('[data-track]').dataset.track,
+    },
+  }))
+}
+
+function userReady(userID) {
+  document.querySelector(`[data-player="${userID}"]`).classList.add('ready')
+  if (getUserFromLocalStorage().id === userID) {
+    document.querySelector('[data-ready]').remove()
+  }
+}
+
+function handelKeyPress(e) {
+  ws.send(JSON.stringify({
+    type: 'newChar',
+    payload: {
+      userID: getUserFromLocalStorage().id,
+      gameID: document.querySelector(['data-track']).dataset.track,
+      char: e.key,
+    },
+  }))
+}
+
+function setChar(payload) {
+  const charContainer = document.querySelector('[data-char]')
+  charContainer.innerText = payload.char
+}
+
 function isLogin() {
   const user = getUserFromLocalStorage()
   if (!user && window.location.pathname !== '/') window.location.href = '/'
@@ -100,4 +139,9 @@ export {
   getUserFromLocalStorage,
   removeFromRace,
   removeGame,
+  setIdReadyButton,
+  readyForGame,
+  userReady,
+  handelKeyPress,
+  setChar,
 }

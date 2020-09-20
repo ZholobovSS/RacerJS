@@ -135,6 +135,22 @@ body {
   flex-flow: row nowrap;
   justify-content: space-between;
   margin-bottom: 1rem;
+  opacity: .5;
+}
+
+.path.ready {
+  opacity: 1;
+}
+
+.charContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 .section {
