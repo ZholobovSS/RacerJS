@@ -6,6 +6,7 @@ const hbs = require('hbs')
 const { v4: uuidv4 } = require('uuid')
 const WebSocket = require('ws')
 const { parse } = require('path')
+const e = require('express')
 const indexRouter = require('./src/routes/index')
 const gamesRouter = require('./src/routes/games')
 const { appRootDir, gameConfig } = require('./src/config/index')
@@ -112,6 +113,8 @@ wss.on('connection', (ws) => {
             name: parseData.payload.name,
             players: {},
             maxPlayers: gameConfig.maxPlayers,
+            trackLength: gameConfig.trackLength,
+            finish: [],
           }
           wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
@@ -138,13 +141,13 @@ wss.on('connection', (ws) => {
         }
         break
       case 'connect': {
-        console.log('connect to game', parseData.payload)
         const game = app.locals.games[parseData.payload.gameID]
         if (game && Object.keys(game.players).length + 1 <= game.maxPlayers) {
           app.locals.games[parseData.payload.gameID].players[parseData.payload.userID] = {
             id: parseData.payload.userID,
             ready: false,
             char: undefined,
+            position: 0,
           }
           ws.send(JSON.stringify({
             type: 'connect',
@@ -221,8 +224,6 @@ wss.on('connection', (ws) => {
 
         break
       case 'playerReady': {
-        console.log(parseData)
-        console.log(app.locals.games)
         app.locals.games[parseData.payload.gameID].players[parseData.payload.userID].ready = true
         wss.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
@@ -239,13 +240,9 @@ wss.on('connection', (ws) => {
 
         if (Object.keys(players).length > 1
          && Object.values(players).every((player) => player.ready)) {
-          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
           Object.keys(players).forEach((userID) => {
             const newChar = String.fromCharCode(Math.floor(Math.random() * 64 + 1040))
-            console.log(newChar)
-            console.log(players[userID])
             players[userID].char = newChar
-            console.log(ws === players[userID].ws)
             app.locals.users[userID].ws.send(JSON.stringify({
               type: 'gameStart',
               payload: {
@@ -253,6 +250,51 @@ wss.on('connection', (ws) => {
               },
             }))
           })
+        }
+      }
+        break
+      case 'newChar': {
+        const { players } = app.locals.games[parseData.payload.gameID]
+        if (players[parseData.payload.userID].char === parseData.payload.char) {
+          players[parseData.payload.userID].position++
+          let finish = false
+          if (players[parseData.payload.userID].position + 1 === app.locals.games[parseData.payload.gameID].trackLength) {
+            finish = true
+            const finishPosition = app.locals.games[parseData.payload.gameID].finish.push(parseData.payload.userID)
+            Object.keys(players).forEach((userID) => {
+              app.locals.users[userID].ws.send(JSON.stringify({
+                type: 'finish',
+                payload: {
+                  userID: parseData.payload.userID,
+                  gameID: parseData.payload.gameID,
+                  position: players[parseData.payload.userID].position,
+                  finishPosition,
+                },
+              }))
+            })
+          } else {
+            const newChar = String.fromCharCode(Math.floor(Math.random() * 64 + 1040))
+            players[parseData.payload.userID].char = newChar
+            app.locals.users[parseData.payload.userID].ws.send(JSON.stringify({
+              type: 'newChar',
+              payload: {
+                char: newChar,
+              },
+            }))
+          }
+
+          if (!finish) {
+            Object.keys(players).forEach((userID) => {
+              app.locals.users[userID].ws.send(JSON.stringify({
+                type: 'upatePosition',
+                payload: {
+                  userID: parseData.payload.userID,
+                  gameID: parseData.payload.gameID,
+                  position: players[parseData.payload.userID].position,
+                },
+              }))
+            })
+          }
         }
       }
         break

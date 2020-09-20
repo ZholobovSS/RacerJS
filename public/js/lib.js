@@ -89,7 +89,7 @@ function handelKeyPress(e) {
     type: 'newChar',
     payload: {
       userID: getUserFromLocalStorage().id,
-      gameID: document.querySelector(['data-track']).dataset.track,
+      gameID: document.querySelector('[data-track]').dataset.track,
       char: e.key,
     },
   }))
@@ -98,6 +98,36 @@ function handelKeyPress(e) {
 function setChar(payload) {
   const charContainer = document.querySelector('[data-char]')
   charContainer.innerText = payload.char
+}
+
+function updatePosition(payload) {
+  const playerPath = document.querySelector(`[data-player="${payload.userID}"]`)
+  const prev = playerPath.querySelector('.active')
+  const next = playerPath.children[payload.position]
+  const prevContent = prev.innerHTML
+  prev.innerHTML = ''
+  prev.classList.remove('active')
+  next.innerHTML = prevContent
+  next.classList.add('active')
+}
+
+function finish(payload) {
+  updatePosition(payload)
+  const playerPath = document.querySelector(`[data-player="${payload.userID}"]`)
+  switch (payload.finishPosition) {
+    case 1:
+      playerPath.classList.add('gold')
+      break
+    case 2:
+      playerPath.classList.add('silver')
+      break
+    case 3:
+      playerPath.classList.add('bronze')
+      break
+    default:
+      break
+  }
+  playerPath.children[0].innerHTML = payload.finishPosition
 }
 
 function isLogin() {
@@ -144,4 +174,6 @@ export {
   userReady,
   handelKeyPress,
   setChar,
+  updatePosition,
+  finish,
 }

@@ -9,6 +9,8 @@ import {
   userReady,
   handelKeyPress,
   setChar,
+  updatePosition,
+  finish,
 } from './lib.js'
 
 function gameScript() {
@@ -37,6 +39,15 @@ function gameScript() {
         break
       case 'newChar':
         setChar(parseData.payload)
+        break
+      case 'upatePosition':
+        updatePosition(parseData.payload)
+        break
+      case 'finish':
+        if (getUserFromLocalStorage().id === parseData.payload.userID) {
+          document.removeEventListener('keypress', handelKeyPress)
+        }
+        finish(parseData.payload)
         break
       default:
         break

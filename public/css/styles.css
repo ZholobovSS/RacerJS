@@ -181,3 +181,15 @@ body {
   transform: scaleX(-1) translateY(-50%);
   left: calc(100% + 10px);
 }
+
+.path.gold .section {
+  border-bottom-color: gold;
+}
+
+.path.silver .section {
+  border-bottom-color: silver;
+}
+
+.path.bronze .section {
+  border-bottom-color: #cd7f32;
+}
