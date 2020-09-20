@@ -16,24 +16,37 @@ function renderNewGame(game) {
   gamesContainer.insertAdjacentHTML('afterbegin', template)
 }
 
+function connectToGame(gameID) {
+  ws.send(JSON.stringify({
+    type: 'connect',
+    payload: {
+      userID: getUserFromLocalStorage().id,
+      gameID,
+    },
+  }))
+}
+
+function requestForGame(gameID) {
+  ws.send(JSON.stringify({
+    type: 'requestForGame',
+    payload: {
+      userID: getUserFromLocalStorage().id,
+      gameID,
+    },
+  }))
+}
+
 function gamesHandler(e) {
-  console.log(getUserFromLocalStorage().id)
   const element = e.target.closest('[data-gameid]')
   if (element) {
-    ws.send(JSON.stringify({
-      type: 'connect',
-      payload: {
-        userID: getUserFromLocalStorage().id,
-        gameID: element.dataset.gameid,
-      },
-    }))
+    requestForGame(element.dataset.gameid)
   }
 }
 
 function renderNewRacer(racer) {
   const track = document.querySelector('[data-track]')
   let template = `
-  <div data-player="${racer.id}" class="path">
+  <div data-player="${racer.userID}" class="path">
     <div class="section active">
       <div data-name="${racer.nick}" class="car">
         ${racer.skin}
@@ -47,9 +60,16 @@ function renderNewRacer(racer) {
 }
 
 function udateGame(game) {
-  const element = document.querySelector(`[data-gameid="${game.gameID}"] [data-playerscount]`)
+  const currentGame = document.querySelector(`[data-gameid="${game.gameID}"]`)
+  const element = currentGame.querySelector('[data-playerscount]')
+  console.log(game)
   if (element) {
     element.innerText = game.players + element.innerText.substring(1)
+    if (game.full) {
+      currentGame.classList.add('gameUnabled')
+    } else {
+      currentGame.classList.add('remove')
+    }
   }
 }
 
@@ -130,6 +150,10 @@ function finish(payload) {
   playerPath.children[0].innerHTML = payload.finishPosition
 }
 
+function gameStarted(gameID) {
+  document.querySelector(`[data-gameid="${gameID}"]`).classList.add('gameStarted')
+}
+
 function isLogin() {
   const user = getUserFromLocalStorage()
   if (!user && window.location.pathname !== '/') window.location.href = '/'
@@ -176,4 +200,6 @@ export {
   setChar,
   updatePosition,
   finish,
+  connectToGame,
+  gameStarted,
 }

@@ -11,6 +11,7 @@ import {
   setChar,
   updatePosition,
   finish,
+  connectToGame,
 } from './lib.js'
 
 function gameScript() {
@@ -19,10 +20,19 @@ function gameScript() {
   isLogin()
   setIdReadyButton()
 
+  const track = document.querySelector('[data-track]')
+  ws.addEventListener('open', () => {
+    console.log('Conect for game')
+    track && connectToGame(track.dataset.track)
+  })
+
   ws.addEventListener('message', (message) => {
     const parseData = JSON.parse(message.data)
     console.log(parseData)
     switch (parseData.type) {
+      case 'connect':
+        renderNewRacer(parseData.payload)
+        break
       case 'newRacer':
         renderNewRacer(parseData.payload)
         break
@@ -58,7 +68,6 @@ function gameScript() {
   readyBtn.addEventListener('click', readyForGame)
 
   window.addEventListener('beforeunload', (e) => {
-    const track = document.querySelector('[data-track]')
     ws.send(JSON.stringify({
       type: 'leaveGame',
       payload: {

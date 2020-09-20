@@ -157,7 +157,7 @@ body {
   width: 40px;
   height: 40px;
   position: relative;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #007bff;
   display: flex;
   flex-flow: row;
   justify-content: center;
@@ -165,7 +165,7 @@ body {
 }
 
 .section.active {
-  border-bottom-color: black;
+  border-bottom-color: #dc3545;
 }
 
 .car {
@@ -192,4 +192,10 @@ body {
 
 .path.bronze .section {
   border-bottom-color: #cd7f32;
+}
+
+.gameUnabled {
+  opacity: .5;
+  cursor: not-allowed;
+  pointer-events
 }

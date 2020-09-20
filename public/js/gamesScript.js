@@ -1,5 +1,12 @@
 import {
-  ws, addExtraTextForInput, renderNewGame, gamesHandler, udateGame, isLogin, removeGame,
+  ws,
+  addExtraTextForInput,
+  renderNewGame,
+  gamesHandler,
+  udateGame,
+  isLogin,
+  removeGame,
+  gameStarted,
 } from './lib.js'
 
 function gamesScript() {
@@ -17,6 +24,7 @@ function gamesScript() {
     e.preventDefault()
     const formData = {
       name: form.elements.gamename.value.trim(),
+      players: +form.elements.players.value,
     }
     if (Object.values(formData).every((el) => el)) {
       ws.send(JSON.stringify({ type: 'newGame', payload: formData }))
@@ -44,6 +52,9 @@ function gamesScript() {
         break
       case 'removeGameFromList':
         removeGame(parseData.payload.gameID)
+        break
+      case 'gameStarted':
+        gameStarted(parseData.payload.gameID)
         break
       case 'connect':
         if (parseData.payload.status === 'OK') {

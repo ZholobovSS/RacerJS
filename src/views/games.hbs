@@ -7,7 +7,8 @@
 
 <ul data-gamesContainer class="list-group py-5 list-group-flush">
   {{#each games}}
-  <li data-gameid="{{this.id}}" class="d-flex pointer justify-content-between list-group-item">
+  <li data-gameid="{{this.id}}"
+    class="d-flex pointer {{#if this.full}} gameUnabled {{/if}} {{#if this.started}} gameUnabled {{/if}} justify-content-between list-group-item">
     <span>{{this.name}}</span><span data-playerscount>{{this.players.length}}/{{this.maxPlayers}}</span></li>
   {{/each}}
   <li class="list-group-item"></li>
@@ -29,10 +30,22 @@
       <div class="modal-body">
         <form name="newgame">
           <div class="form-group">
-            <input name="gamename" type="text" class="form-control" id="exampleInputEmail1" placeholder="Game name"
+            <label for="gameName">Game name: </label>
+            <input name="gamename" type="text" class="form-control" id="gameName" placeholder="Game name"
               aria-describedby="emailHelp">
           </div>
-
+          <div class="form-group">
+            <label for="players">Player numbers:</label>
+            <select name="players" class="form-control" id="players">
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+            </select>
+          </div>
           <button type="submit" class="btn btn-primary">Create</button>
         </form>
       </div>

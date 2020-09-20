@@ -1,5 +1,5 @@
 const gameConfig = {
-  maxPlayers: 4,
+  maxPlayers: 8,
   trackLength: 20,
 }
 
