@@ -1,7 +1,10 @@
 const ws = new WebSocket(window.location.origin.replace('http', 'ws'))
 
 function addExtraTextForInput(el, html) {
-  el.insertAdjacentHTML('afterend', `<small id="emailHelp" class="form-text text-danger">${html}</small>`)
+  const element = document.querySelector('[data-inputerror]')
+  if (element && html === element.innerHTML) return
+  if (element) { element.remove(); return }
+  el.insertAdjacentHTML('afterend', `<small data-inputerror id="emailHelp" class="form-text text-danger">${html}</small>`)
 }
 
 function getUserFromLocalStorage() {
@@ -44,7 +47,7 @@ function gamesHandler(e) {
 }
 
 function renderNewRacer(racer) {
-  const track = document.querySelector('[data-track]')
+  const pathsContainer = document.querySelector('[data-paths]')
   let template = `
   <div data-player="${racer.userID}" class="path">
     <div class="section active">
@@ -56,13 +59,17 @@ function renderNewRacer(racer) {
     template += '<div class="section"></div>'
   }
   template += '</div>'
-  track.insertAdjacentHTML('beforeend', template)
+
+  if (getUserFromLocalStorage().id === racer.userID) {
+    pathsContainer.insertAdjacentHTML('afterbegin', template)
+  } else {
+    pathsContainer.insertAdjacentHTML('beforeend', template)
+  }
 }
 
 function udateGame(game) {
   const currentGame = document.querySelector(`[data-gameid="${game.gameID}"]`)
   const element = currentGame.querySelector('[data-playerscount]')
-  console.log(game)
   if (element) {
     element.innerText = game.players + element.innerText.substring(1)
     if (game.full) {
@@ -136,6 +143,9 @@ function finish(payload) {
   const playerPath = document.querySelector(`[data-player="${payload.userID}"]`)
   switch (payload.finishPosition) {
     case 1:
+      if (getUserFromLocalStorage().id === payload.userID) {
+        document.querySelector('[data-win]').classList.add('winning')
+      }
       playerPath.classList.add('gold')
       break
     case 2:
@@ -167,16 +177,18 @@ function isLogin() {
     ws.addEventListener('message', (message) => {
       const parseData = JSON.parse(message.data)
 
-      switch (parseData.payload.status) {
-        case 'OK':
-          if (window.location.pathname === '/') window.location.href = '/games'
-          break
-        case 'BAD':
-          localStorage.removeItem('user')
-          if (window.location.pathname !== '/') window.location.href = '/'
-          break
-        default:
-          break
+      if (parseData.type === 'authorization') {
+        switch (parseData.payload.status) {
+          case 'OK':
+            if (window.location.pathname === '/') window.location.href = '/games'
+            break
+          case 'BAD':
+            localStorage.removeItem('user')
+            if (window.location.pathname !== '/') window.location.href = '/'
+            break
+          default:
+            break
+        }
       }
     })
   }

@@ -102,7 +102,6 @@ function newGameWS(WebSocket, ws, app, parseData, wss) {
 
 function requestForGame(WebSocket, ws, app, parseData) {
   const game = app.locals.games[parseData.payload.gameID]
-  console.log(game)
   if (!game.players[parseData.payload.userID]
     && game && Object.keys(game.players).length + 1 <= game.maxPlayers
     && !game.players[parseData.payload.userID]
@@ -123,8 +122,6 @@ function requestForGame(WebSocket, ws, app, parseData) {
 
 function connectGameWS(WebSocket, ws, app, parseData, wss) {
   const game = app.locals.games[parseData.payload.gameID]
-  console.log('connect to game')
-  console.log(game)
   if (!game.players[parseData.payload.userID]
     && game && Object.keys(game.players).length + 1 <= game.maxPlayers
     && !game.players[parseData.payload.userID]
@@ -206,7 +203,6 @@ function playerReadyWS(WebSocket, ws, app, parseData, wss) {
   })
 
   const { players } = app.locals.games[parseData.payload.gameID]
-  console.log(Object.keys(players).length > 1, Object.values(players).every((player) => player.ready))
 
   if (Object.keys(players).length > 1
          && Object.values(players).every((player) => player.ready)) {
@@ -214,7 +210,6 @@ function playerReadyWS(WebSocket, ws, app, parseData, wss) {
     Object.keys(players).forEach((userID) => {
       const newChar = String.fromCharCode(Math.floor(Math.random() * 64 + 1040))
       players[userID].char = newChar
-      console.log(app.locals.users[userID])
       app.locals.users[userID].ws.send(JSON.stringify({
         type: 'gameStart',
         payload: {

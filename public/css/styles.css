@@ -197,5 +197,24 @@ body {
 .gameUnabled {
   opacity: .5;
   cursor: not-allowed;
-  pointer-events
+  pointer-events: none;
+}
+
+.win {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 200px;
+  opacity: 0;
+}
+
+.win.winning {
+  animation: winning 3s linear;
+}
+
+@keyframes winning {
+  from {transform: translate(-50%, -50%); opacity: 0;}
+  50% {transform: translate(-50%, -50%);  opacity: 1;}
+  to {transform: translate(-50%, -50%); opacity: 0;}
 }

@@ -22,13 +22,11 @@ function gameScript() {
 
   const track = document.querySelector('[data-track]')
   ws.addEventListener('open', () => {
-    console.log('Conect for game')
     track && connectToGame(track.dataset.track)
   })
 
   ws.addEventListener('message', (message) => {
     const parseData = JSON.parse(message.data)
-    console.log(parseData)
     switch (parseData.type) {
       case 'connect':
         renderNewRacer(parseData.payload)
@@ -43,7 +41,6 @@ function gameScript() {
         userReady(parseData.payload.userID)
         break
       case 'gameStart':
-        console.log(parseData)
         document.addEventListener('keypress', handelKeyPress)
         setChar(parseData.payload)
         break
@@ -77,7 +74,6 @@ function gameScript() {
     }))
     readyBtn.removeEventListener('click', readyForGame)
     document.removeEventListener('keypress', handelKeyPress)
-    console.log('leaveGame')
   })
 }
 

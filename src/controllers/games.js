@@ -9,7 +9,6 @@ const all = (req, res) => {
     players: Object.keys(req.app.locals.games[gameID].players),
   }))
 
-  console.log(games)
   res.render('games', { games })
 }
 
