@@ -1,2 +1,5 @@
 # RacerJS
-JS, WebSocket, Node.js
+Node.js, Express, WebSocket
+
+## Demo 
+[Start game](https://racerjs.herokuapp.com/)
